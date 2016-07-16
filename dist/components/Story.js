@@ -44,6 +44,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _markdownToReactComponents = require('markdown-to-react-components');
 
 var _markdownToReactComponents2 = _interopRequireDefault(_markdownToReactComponents);
@@ -145,6 +149,18 @@ var stylesheet = {
   },
   propTableHead: {
     margin: '20px 0 0 0'
+  },
+  specs: {
+    errors: {
+      color: 'red',
+      message: {
+        backgroundColor: '#fafafa',
+        padding: '10px'
+      }
+    },
+    pass: {
+      color: 'green'
+    }
   }
 };
 
@@ -202,6 +218,7 @@ var Story = function (_React$Component) {
             'div',
             { style: stylesheet.infoBody },
             this._getInfoContent(),
+            this._getSpecifications(),
             this._getSourceCode(),
             this._getPropTables()
           )
@@ -259,6 +276,7 @@ var Story = function (_React$Component) {
               { style: stylesheet.infoBody },
               this._getInfoHeader(),
               this._getInfoContent(),
+              this._getSpecifications(),
               this._getSourceCode(),
               this._getPropTables()
             )
@@ -337,10 +355,63 @@ var Story = function (_React$Component) {
       );
     }
   }, {
+    key: '_getSpecifications',
+    value: function _getSpecifications() {
+      if (!_lodash2.default.isEmpty(this.props.specs)) {
+        return _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'h1',
+            { style: stylesheet.source.h1 },
+            'Specifications'
+          ),
+          _react2.default.createElement(
+            'ul',
+            null,
+            this.props.specs.wrongResults.map(function (r, idx) {
+              return _react2.default.createElement(
+                'li',
+                { key: idx },
+                _react2.default.createElement(
+                  'p',
+                  null,
+                  _react2.default.createElement(
+                    'span',
+                    { style: stylesheet.specs.errors },
+                    'Error :'
+                  ),
+                  ' ',
+                  r.spec
+                ),
+                _react2.default.createElement(
+                  'p',
+                  { style: stylesheet.specs.errors.message },
+                  r.e.message
+                )
+              );
+            }),
+            this.props.specs.goodResults.map(function (r, idx) {
+              return _react2.default.createElement(
+                'li',
+                { key: idx },
+                _react2.default.createElement(
+                  'span',
+                  { style: stylesheet.specs.pass },
+                  'Pass : '
+                ),
+                r
+              );
+            })
+          )
+        );
+      } else {
+        return null;
+      }
+    }
+  }, {
     key: '_getPropTables',
     value: function _getPropTables() {
-      var types = new _map2.default();
-
       if (this.props.propTables === false) {
         return null;
       }
@@ -349,6 +420,8 @@ var Story = function (_React$Component) {
         return null;
       }
 
+      var types = new _map2.default();
+
       if (this.props.propTables) {
         this.props.propTables.forEach(function (type) {
           types.set(type, true);
@@ -356,7 +429,6 @@ var Story = function (_React$Component) {
       }
 
       function extract(children) {
-        var type = children.type;
 
         if (Array.isArray(children)) {
           children.forEach(extract);
@@ -366,6 +438,8 @@ var Story = function (_React$Component) {
           return;
         }
 
+        var type = children.type;
+        var name = type.displayName || type.name;
         if (!types.has(type)) {
           types.set(type, true);
         }
@@ -438,6 +512,7 @@ Story.propTypes = {
   showInline: _react2.default.PropTypes.bool,
   showHeader: _react2.default.PropTypes.bool,
   showSource: _react2.default.PropTypes.bool,
+  specs: _react2.default.PropTypes.object,
   children: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.object, _react2.default.PropTypes.array])
 };
 

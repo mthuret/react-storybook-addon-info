@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Story = undefined;
+exports.it = exports.describe = exports.InfoAddon = exports.Story = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -27,11 +27,17 @@ var defaultOptions = {
   source: true
 };
 
-exports.default = {
+var currentStory = "";
+var results = {};
+
+var InfoAddon = exports.InfoAddon = {
   addWithInfo: function addWithInfo(storyName, info, storyFn, _options) {
     var options = (0, _extends3.default)({}, defaultOptions, _options);
 
     this.add(storyName, function (context) {
+      if (!_.isUndefined(_options) && !_.isUndefined(_options.specs)) {
+        options.specs();
+      }
       var _info = info;
       var _storyFn = storyFn;
 
@@ -43,14 +49,14 @@ exports.default = {
           throw new Error('No story defining function has been specified');
         }
       }
-
       var props = {
         _info: _info,
         context: context,
         showInline: Boolean(options.inline),
         showHeader: Boolean(options.header),
         showSource: Boolean(options.source),
-        propTables: options.propTables
+        propTables: options.propTables,
+        specs: results[storyName]
       };
 
       return _react2.default.createElement(
@@ -59,5 +65,23 @@ exports.default = {
         _storyFn(context)
       );
     });
+  }
+};
+
+var describe = exports.describe = function describe(desc, func) {
+  currentStory = desc;
+  results[currentStory] = {
+    goodResults: [],
+    wrongResults: []
+  };
+  func();
+};
+
+var it = exports.it = function it(desc, func) {
+  try {
+    func();
+    results[currentStory].goodResults.push(desc);
+  } catch (e) {
+    results[currentStory].wrongResults.push({ spec: desc, e: e });
   }
 };

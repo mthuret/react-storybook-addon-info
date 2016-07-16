@@ -5,20 +5,26 @@ export const Story = _Story;
 const defaultOptions = {
   inline: false,
   header: true,
-  source: true,
+  source: true
 };
 
-export default {
+let currentStory = "";
+const results = {};
+
+export const InfoAddon = {
   addWithInfo(storyName, info, storyFn, _options) {
     const options = {
       ...defaultOptions,
       ..._options
     };
-    
+
     this.add(storyName, (context) => {
+      if (!_.isUndefined(_options) && !_.isUndefined(_options.specs)) {
+        options.specs();
+      }
       let _info = info;
       let _storyFn = storyFn;
-      
+
       if (typeof storyFn !== 'function') {
         if (typeof info === 'function') {
           _storyFn = info;
@@ -27,7 +33,6 @@ export default {
           throw new Error('No story defining function has been specified');
         }
       }
-
       const props = {
         _info,
         context,
@@ -35,6 +40,7 @@ export default {
         showHeader: Boolean(options.header),
         showSource: Boolean(options.source),
         propTables: options.propTables,
+        specs: results[storyName]
       };
 
       return (
@@ -43,5 +49,23 @@ export default {
         </Story>
       );
     });
+  }
+};
+
+export const describe = (desc, func) => {
+  currentStory = desc;
+  results[currentStory] = {
+    goodResults: [],
+    wrongResults: []
+  };
+  func();
+};
+
+export const it = function (desc, func) {
+  try {
+    func();
+    results[currentStory].goodResults.push(desc);
+  } catch (e) {
+    results[currentStory].wrongResults.push({spec: desc, e: e});
   }
 };

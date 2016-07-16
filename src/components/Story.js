@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import MTRC from 'markdown-to-react-components';
 import PropTable from './PropTable';
 import Node from './Node';
@@ -90,6 +91,18 @@ const stylesheet = {
   propTableHead: {
     margin: '20px 0 0 0',
   },
+  specs: {
+    errors: {
+      color: 'red',
+      message: {
+        backgroundColor: '#fafafa',
+        padding: '10px'
+      }
+    },
+    pass: {
+      color: 'green'
+    }
+  }
 };
 
 export default class Story extends React.Component {
@@ -120,6 +133,7 @@ export default class Story extends React.Component {
         <div style={stylesheet.infoPage}>
           <div style={stylesheet.infoBody} >
             { this._getInfoContent() }
+            { this._getSpecifications() }
             { this._getSourceCode() }
             { this._getPropTables() }
           </div>
@@ -161,6 +175,7 @@ export default class Story extends React.Component {
             <div style={stylesheet.infoBody}>
               { this._getInfoHeader() }
               { this._getInfoContent() }
+              { this._getSpecifications() }
               { this._getSourceCode() }
               { this._getPropTables() }
             </div>
@@ -221,9 +236,23 @@ export default class Story extends React.Component {
     );
   }
 
-  _getPropTables() {
-    const types = new Map();
+  _getSpecifications() {
+    if(!_.isEmpty(this.props.specs)){
+      return (<div>
+        <h1 style={stylesheet.source.h1}>Specifications</h1>
+        <ul>
+          {this.props.specs.wrongResults.map((r, idx) => <li key={idx}>
+            <p><span style={stylesheet.specs.errors}>Error :</span> {r.spec}</p>
+            <p style={stylesheet.specs.errors.message}>{r.e.message}</p></li>)}
+          {this.props.specs.goodResults.map((r, idx) => <li key={idx}><span style={stylesheet.specs.pass}>Pass : </span>{r}</li>)}
+        </ul>
+      </div>)
+    }else {
+      return null;
+    }
+  }
 
+  _getPropTables() {
     if (this.props.propTables === false) {
       return null;
     }
@@ -232,6 +261,8 @@ export default class Story extends React.Component {
       return null;
     }
 
+    const types = new Map();
+
     if (this.props.propTables) {
       this.props.propTables.forEach(function (type) {
         types.set(type, true);
@@ -239,7 +270,6 @@ export default class Story extends React.Component {
     }
 
     function extract(children) {
-      const type = children.type;
 
       if (Array.isArray(children)) {
         children.forEach(extract);
@@ -249,6 +279,8 @@ export default class Story extends React.Component {
         return;
       }
 
+      const type = children.type;
+      const name = type.displayName || type.name;
       if (!types.has(type)) {
         types.set(type, true);
       }
@@ -305,6 +337,7 @@ Story.propTypes = {
   showInline: React.PropTypes.bool,
   showHeader: React.PropTypes.bool,
   showSource: React.PropTypes.bool,
+  specs: React.PropTypes.object,
   children: React.PropTypes.oneOfType([
     React.PropTypes.object,
     React.PropTypes.array,

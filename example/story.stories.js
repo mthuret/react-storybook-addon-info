@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from './Button';
-import { storiesOf, action } from '@kadira/storybook';
+import { storiesOf, action, describe, it } from '../.storybook/facade';
+import {shallow} from "enzyme";
+import {expect} from "chai";
 
 storiesOf('Button')
   .addWithInfo(
@@ -19,6 +21,17 @@ storiesOf('Button')
     ),
   );
 
+const BUTTON_SPECS = describe('simple usage (inline info)', function() {
+  it('Text should be The Button', () => {
+    let output = shallow(<Button label="The Button" onClick={action('onClick')}/>);
+    expect(output.prop('children')).to.equal('The Button')
+  });
+  it('Blablabla', () => {
+    let output = shallow(<Button label="The Button" onClick={action('onClick')}/>);
+    expect(output.prop('children')).to.equal('The Buttton')
+  });
+});
+
 storiesOf('Button')
   .addWithInfo(
     'simple usage (inline info)',
@@ -26,8 +39,10 @@ storiesOf('Button')
       This is the basic usage with the button with providing a label to show the text.
     `,
     () => (<Button label="The Button" onClick={action('onClick')}/>),
-    { inline: true },
+    { inline: true, specs: () =>  BUTTON_SPECS},
   );
+
+
 
 storiesOf('Button')
   .addWithInfo(
