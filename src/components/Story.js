@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import MTRC from 'markdown-to-react-components';
 import PropTable from './PropTable';
 import Node from './Node';
@@ -89,6 +90,18 @@ const stylesheet = {
   propTableHead: {
     margin: '20px 0 0 0'
   },
+  specs: {
+    errors: {
+      color: 'red',
+      message: {
+        backgroundColor: '#fafafa',
+        padding: '10px'
+      }
+    },
+    pass: {
+      color: 'green'
+    }
+  }
 }
 
 export default class Story extends React.Component {
@@ -126,6 +139,7 @@ export default class Story extends React.Component {
         <div style={stylesheet.infoPage}>
           <div style={stylesheet.infoBody} >
             { this._getInfoContent() }
+            { this._getSpecifications() }
             { this._getSourceCode() }
             { this._getPropTables() }
           </div>
@@ -164,6 +178,7 @@ export default class Story extends React.Component {
             <div style={stylesheet.infoBody}>
               { this._getInfoHeader() }
               { this._getInfoContent() }
+              { this._getSpecifications() }
               { this._getSourceCode() }
               { this._getPropTables() }
             </div>
@@ -222,6 +237,22 @@ export default class Story extends React.Component {
         </Pre>
       </div>
     );
+  }
+
+  _getSpecifications() {
+    if(!_.isEmpty(this.props.specs)){
+      return (<div>
+        <h1 style={stylesheet.source.h1}>Specifications</h1>
+        <ul>
+          {this.props.specs.wrongResults.map(r=><li>
+            <p><span style={stylesheet.specs.errors}>Error :</span> {r.spec}</p>
+            <p style={stylesheet.specs.errors.message}>{r.e.message}</p></li>)}
+          {this.props.specs.goodResults.map(r=><li><span style={stylesheet.specs.pass}>Pass : </span>{r}</li>)}
+        </ul>
+      </div>)
+    }else {
+      return null;
+    }
   }
 
   _getPropTables() {

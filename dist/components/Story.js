@@ -50,6 +50,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _markdownToReactComponents = require('markdown-to-react-components');
 
 var _markdownToReactComponents2 = _interopRequireDefault(_markdownToReactComponents);
@@ -146,6 +150,17 @@ var stylesheet = (_stylesheet = {
   }
 }), (0, _defineProperty3.default)(_stylesheet, 'propTableHead', {
   margin: '20px 0 0 0'
+}), (0, _defineProperty3.default)(_stylesheet, 'specs', {
+  errors: {
+    color: 'red',
+    message: {
+      backgroundColor: '#fafafa',
+      padding: '10px'
+    }
+  },
+  pass: {
+    color: 'green'
+  }
 }), _stylesheet);
 
 var Story = function (_React$Component) {
@@ -210,6 +225,7 @@ var Story = function (_React$Component) {
             'div',
             { style: stylesheet.infoBody },
             this._getInfoContent(),
+            this._getSpecifications(),
             this._getSourceCode(),
             this._getPropTables()
           )
@@ -262,6 +278,7 @@ var Story = function (_React$Component) {
               { style: stylesheet.infoBody },
               this._getInfoHeader(),
               this._getInfoContent(),
+              this._getSpecifications(),
               this._getSourceCode(),
               this._getPropTables()
             )
@@ -338,6 +355,61 @@ var Story = function (_React$Component) {
           })
         )
       );
+    }
+  }, {
+    key: '_getSpecifications',
+    value: function _getSpecifications() {
+      if (!_lodash2.default.isEmpty(this.props.specs)) {
+        return _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'h1',
+            { style: stylesheet.source.h1 },
+            'Specifications'
+          ),
+          _react2.default.createElement(
+            'ul',
+            null,
+            this.props.specs.wrongResults.map(function (r) {
+              return _react2.default.createElement(
+                'li',
+                null,
+                _react2.default.createElement(
+                  'p',
+                  null,
+                  _react2.default.createElement(
+                    'span',
+                    { style: stylesheet.specs.errors },
+                    'Error :'
+                  ),
+                  ' ',
+                  r.spec
+                ),
+                _react2.default.createElement(
+                  'p',
+                  { style: stylesheet.specs.errors.message },
+                  r.e.message
+                )
+              );
+            }),
+            this.props.specs.goodResults.map(function (r) {
+              return _react2.default.createElement(
+                'li',
+                null,
+                _react2.default.createElement(
+                  'span',
+                  { style: stylesheet.specs.pass },
+                  'Pass : '
+                ),
+                r
+              );
+            })
+          )
+        );
+      } else {
+        return null;
+      }
     }
   }, {
     key: '_getPropTables',

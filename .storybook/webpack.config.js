@@ -22,6 +22,17 @@ const config = {
       }
     ],
   },
+
+  //if using enzyme for testings/specs part, you'll need this configuration
+  //to make it works with storybook
+  externals: {
+    'jsdom': 'window',
+    'cheerio': 'window',
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': 'window',
+    'react/addons': 'window',
+    'text-encoding': 'window'
+  }
 };
 
 updateConfig(config);
