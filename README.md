@@ -147,7 +147,7 @@ jest.mock('./.storybook/facade');
 Inside your stories file you'll use the .storybook/facade.js file for imports.
 Finally add this to your jest configuration :
 
-```
+```js
 "jest":{
     "setupFiles": [
       "./path/to/your/jest/config/file.js"
@@ -160,7 +160,7 @@ Finally add this to your jest configuration :
 
 Create the same facade.js file than for the jest configuration but then add the following line to your .storybook/config.js
 
-```
+```js
 import {storiesOf, action, linkTo, describe, it} from "./facade";
 global.storiesOf = storiesOf;
 global.action = action;
@@ -171,7 +171,7 @@ global.it = it;
 
 Create wherever you want a new file that will mock the storybook api
 
-```
+```js
 export const storiesOf = function storiesOf() {
   var api = {};
   api.add = ()=> { return api; };
@@ -188,7 +188,7 @@ export const it = it;
 
 Then create or add those line to a mocha config file :
 
-```
+```js
 import {storiesOf, action, linkTo, describe, it} from "path/to/your/mock/file";
 global.storiesOf = storiesOf;
 global.action = action;
