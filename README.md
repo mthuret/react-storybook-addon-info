@@ -1,4 +1,4 @@
-`# React Storybook Info Addon
+# React Storybook Info Addon
 
 A React Storybook addon to show additional information for your stories.
 
